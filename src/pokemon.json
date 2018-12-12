@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Bulbasaur",
+    "img": "bulbasaur.png"
+  },
+  {
+    "name": "Ivysaur",
+    "img": "ivysaur.png"
+  },
+  {
+    "name": "Venusaur",
+    "img": "venusaur.png"
+  },
+  {
+    "name": "Charmander",
+    "img": "charmander.png"
+  },
+  {
+    "name": "Charmeleon",
+    "img": "charmeleon.png"
+  },
+  {
+    "name": "Charizard",
+    "img": "charizard.png"
+  },
+  {
+    "name": "Squirtle",
+    "img": "squirtle.png"
+  },
+  {
+    "name": "Wartortle",
+    "img": "wartortle.png"
+  },
+  {
+    "name": "Blastoise",
+    "img": "blastoise.png"
+  }
+]
