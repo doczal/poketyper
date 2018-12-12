@@ -5,28 +5,68 @@ import pokemon from '../pokemon.json';
 class App extends Component {
   state = {
     pokemon: pokemon,
+    currPokemon: null,
+    pointer: 0,
+    answer: '',
   };
 
   componentDidMount() {
+    const { pokemon, pointer } = this.state;
+    this.setState({
+      currPokemon: pokemon[pointer],
+    });
+  }
 
+  handleChange = (e) => {
+    this.setState({
+      answer: e.target.value,
+    });
+  }
+
+  handleSubmit = (e) => {
+    const { answer, currPokemon } = this.state;
+    e.preventDefault();
+    if(answer.toLowerCase() === currPokemon.name.toLowerCase()) {
+      this.getNext();
+    } else {
+      alert('wrong!');
+    }
+    this.setState({
+      answer: '',
+    });
+  }
+
+  getNext = () => {
+    this.setState((prevState) => ({
+      pointer: prevState.pointer + 1,
+      currPokemon: this.state.pokemon[prevState.pointer + 1],
+    }));
   }
 
   render() {
-    const { pokemon } = this.state;
+    const { currPokemon } = this.state;
     return (
       <div className="App">
       {
-        this.state.pokemon.length > 0 ?
+        this.state.currPokemon ?
         (
-          <div className="spriteContainer">
-            <img src={`${process.env.PUBLIC_URL}/img/${pokemon[0].img}`} alt={pokemon[0].name}/>
+          <div>
+            <div className="spriteContainer">
+              <img src={`${process.env.PUBLIC_URL}/img/${currPokemon.img}`} alt={currPokemon.name}/>
+            </div>
+            <form onSubmit={this.handleSubmit}>
+              <input 
+                type="text"
+                onChange={this.handleChange}
+                value={this.state.answer}
+              />
+            </form>
           </div>
         ) :
         (
           <div className="loader">Now loading...</div>
         )
       }
-        
       </div>
     );
   }
