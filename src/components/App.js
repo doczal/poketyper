@@ -7,6 +7,7 @@ class App extends Component {
   state = {
     pokemon: pokemon,
     currPokemon: null,
+    totalPokemon: pokemon.length,
     pointer: 0,
     answer: '',
     time: 0,
@@ -21,14 +22,11 @@ class App extends Component {
   }
 
   handleChange = (e) => {
+    if(!this.timerId) {
+      this.startTimer();
+    }
     this.setState({
       answer: e.target.value,
-    });
-  }
-
-  updateTime = (time) => {
-    this.setState({
-      time,
     });
   }
 
@@ -46,9 +44,44 @@ class App extends Component {
   }
 
   getNext = () => {
+    const { pointer, totalPokemon, pokemon } = this.state;
+    console.log(pointer);
+    console.log(totalPokemon - 1);
+    if(pointer < totalPokemon - 1) {
+      this.setState((prevState) => ({
+        pointer: prevState.pointer + 1,
+        currPokemon: pokemon[prevState.pointer + 1],
+      }));
+    } else {
+      this.stopTimer();
+    }
+    
+  }
+
+  //Timer functions
+  delta = () => {
+    const now = Date.now();
+    const delta = now - this.offset;
+    this.offset = now;
+    return delta;
+  }
+
+  startTimer = () => {
+    if(!this.timerId) {
+      this.offset = Date.now();
+      this.timerId = setInterval(this.updateTimer, 100);
+    }
+  }
+
+  stopTimer = () => {
+    if(this.timerId) {
+      clearInterval(this.timerId);
+    }
+  }
+
+  updateTimer = () => {
     this.setState((prevState) => ({
-      pointer: prevState.pointer + 1,
-      currPokemon: this.state.pokemon[prevState.pointer + 1],
+      time: prevState.time + this.delta(),
     }));
   }
 
@@ -72,7 +105,6 @@ class App extends Component {
             </form>
             <Timer 
               time={time}
-              updateTime={this.updateTime}
             />
           </div>
         ) :

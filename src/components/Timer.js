@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 import '../styles/Timer.scss';
 
 class Timer extends Component {
-  componentDidMount() {
-    this.start();
-  }
-
   updateTimer = () => {
     this.props.updateTime(this.props.time + this.delta());
   }
@@ -21,6 +17,12 @@ class Timer extends Component {
     if(!this.timerId) {
       this.offset = Date.now();
       this.timerId = setInterval(this.updateTimer, 100);
+    }
+  }
+
+  stop = () => {
+    if(this.timerId) {
+      clearInterval(this.timerId);
     }
   }
 
