@@ -4,6 +4,11 @@ import pokemon from '../pokemon.json';
 import Timer from './Timer';
 import shuffle from 'shuffle-array';
 
+const STATUS_LOADING = 'STATUS_LOADING',
+      STATUS_READY = 'STATUS_READY',
+      STATUS_PLAYING = 'STATUS_PLAYING',
+      STATUS_FINISHED = 'STATUS_FINISHED';
+
 class App extends Component {
   state = {
     pokemon: shuffle(pokemon),
@@ -13,35 +18,49 @@ class App extends Component {
     answer: '',
     time: 0,
     finishTime: 0,
+    status: STATUS_LOADING,
   };
 
   componentDidMount() {
     const { pokemon, pointer } = this.state;
+    //Preload all Pokemon images
+    for(let pkmn of pokemon) {
+      console.log(`${process.env.PUBLIC_URL}/img/${pkmn.img}`);
+      const img = new Image();
+      img.src = `${process.env.PUBLIC_URL}/img/${pkmn.img}`;
+    }
+    console.log('done');
     this.setState({
       currPokemon: pokemon[pointer],
+      status: STATUS_READY,
     });
   }
 
   handleChange = (e) => {
     if(!this.timerId) {
       this.startTimer();
+      this.setState({
+        status: STATUS_PLAYING,
+      });
     }
-    this.setState({
-      answer: e.target.value,
-    });
+    if(this.state.status !== STATUS_FINISHED) {
+      this.setState({
+        answer: e.target.value,
+      });
+    }
   }
 
   handleSubmit = (e) => {
-    const { answer, currPokemon } = this.state;
     e.preventDefault();
-    if(answer.toLowerCase() === currPokemon.name.toLowerCase()) {
-      this.getNext();
-    } else {
-      alert('wrong!');
+    if(this.state.status === STATUS_PLAYING) {
+      const { answer, currPokemon } = this.state;
+      if(answer.toLowerCase() === currPokemon.name.toLowerCase()) {
+        this.getNext();
+      }
+      this.setState({
+        answer: '',
+      });
     }
-    this.setState({
-      answer: '',
-    });
   }
 
   getNext = () => {
@@ -54,6 +73,10 @@ class App extends Component {
         currPokemon: pokemon[prevState.pointer + 1],
       }));
     } else {
+      this.setState({
+        finishTime: this.state.time,
+        status: STATUS_FINISHED,
+      })
       this.stopTimer();
     }
     
@@ -87,11 +110,11 @@ class App extends Component {
   }
 
   render() {
-    const { currPokemon, time, updateTime } = this.state;
+    const { currPokemon, time } = this.state;
     return (
       <div className="App">
       {
-        this.state.currPokemon ?
+        this.state.status !== STATUS_LOADING ?
         (
           <div>
             <div className="spriteContainer">
@@ -104,6 +127,7 @@ class App extends Component {
                 value={this.state.answer}
               />
             </form>
+            { this.state.status === STATUS_FINISHED ? (<div>Congrats! Your final time is:</div>) : null}
             <Timer 
               time={time}
             />
