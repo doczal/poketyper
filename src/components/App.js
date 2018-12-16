@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import '../styles/App.scss';
 import pokemon from '../pokemon.json';
 import Timer from './Timer';
+import shuffle from 'shuffle-array';
 
 class App extends Component {
   state = {
-    pokemon: pokemon,
+    pokemon: shuffle(pokemon),
     currPokemon: null,
     totalPokemon: pokemon.length,
     pointer: 0,

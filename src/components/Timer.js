@@ -2,30 +2,6 @@ import React, { Component } from 'react';
 import '../styles/Timer.scss';
 
 class Timer extends Component {
-  updateTimer = () => {
-    this.props.updateTime(this.props.time + this.delta());
-  }
-
-  delta = () => {
-    const now = Date.now();
-    const delta = now - this.offset;
-    this.offset = now;
-    return delta;
-  }
-
-  start = () => {
-    if(!this.timerId) {
-      this.offset = Date.now();
-      this.timerId = setInterval(this.updateTimer, 100);
-    }
-  }
-
-  stop = () => {
-    if(this.timerId) {
-      clearInterval(this.timerId);
-    }
-  }
-
   padZeroes(units) {
     let timeStr = units.toString();
     if(timeStr.length < 2) {
@@ -45,7 +21,6 @@ class Timer extends Component {
   }
 
   render() {
-    //const { time } = this.state;
     return (
       <div>{this.displayTime(this.props.time)}</div>
     );
