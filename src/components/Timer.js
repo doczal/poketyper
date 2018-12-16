@@ -6,14 +6,8 @@ class Timer extends Component {
     this.start();
   }
 
-  state = {
-    time: 0,
-  };
-
   updateTimer = () => {
-    this.setState((prevState) => ({
-      time: prevState.time + this.delta(),
-    }));
+    this.props.updateTime(this.props.time + this.delta());
   }
 
   delta = () => {
@@ -49,9 +43,9 @@ class Timer extends Component {
   }
 
   render() {
-    const { time } = this.state;
+    //const { time } = this.state;
     return (
-      <div>{this.displayTime(time)}</div>
+      <div>{this.displayTime(this.props.time)}</div>
     );
   }
 }

@@ -9,6 +9,7 @@ class App extends Component {
     currPokemon: null,
     pointer: 0,
     answer: '',
+    time: 0,
     finishTime: 0,
   };
 
@@ -22,6 +23,12 @@ class App extends Component {
   handleChange = (e) => {
     this.setState({
       answer: e.target.value,
+    });
+  }
+
+  updateTime = (time) => {
+    this.setState({
+      time,
     });
   }
 
@@ -46,7 +53,7 @@ class App extends Component {
   }
 
   render() {
-    const { currPokemon } = this.state;
+    const { currPokemon, time, updateTime } = this.state;
     return (
       <div className="App">
       {
@@ -63,7 +70,10 @@ class App extends Component {
                 value={this.state.answer}
               />
             </form>
-            <Timer />
+            <Timer 
+              time={time}
+              updateTime={this.updateTime}
+            />
           </div>
         ) :
         (
