@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import '../styles/App.scss';
 import pokemon from '../pokemon.json';
+import Timer from './Timer';
 
 class App extends Component {
   state = {
@@ -8,6 +9,7 @@ class App extends Component {
     currPokemon: null,
     pointer: 0,
     answer: '',
+    finishTime: 0,
   };
 
   componentDidMount() {
@@ -61,6 +63,7 @@ class App extends Component {
                 value={this.state.answer}
               />
             </form>
+            <Timer />
           </div>
         ) :
         (
