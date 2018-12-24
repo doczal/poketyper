@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import '../styles/App.scss';
+
+import LandingPage from './Landing';
 import Game from './Game'
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import * as ROUTES from '../constants/routes';
 
 class App extends Component {
 
@@ -10,7 +13,10 @@ class App extends Component {
     return (
       <Router>
         <div className="App">
-          <Game />
+          <Route exact path={ROUTES.LANDING} component={LandingPage} />
+          <Route exact path={ROUTES.SIGN_UP} component={LandingPage} />
+          <Route exact path={ROUTES.SIGN_IN} component={LandingPage} />
+          <Route exact path={ROUTES.GAME} component={Game} />
         </div>
       </Router>
     );
