@@ -6,17 +6,20 @@ import '../styles/Game.scss';
 import * as gs from '../constants/gameStates';
 
 class Game extends Component {
+  constructor(props) {
+    super(props);
 
-  state = {
-    pokemon: shuffle(pokemon),
-    currPokemon: null,
-    totalPokemon: pokemon.length,
-    pointer: 0,
-    answer: '',
-    time: 0,
-    finishTime: 0,
-    status: gs.STATUS_LOADING,
-  };
+    this.state = {
+      pokemon: shuffle(pokemon),
+      currPokemon: null,
+      totalPokemon: pokemon.length,
+      pointer: 0,
+      answer: '',
+      time: 0,
+      finishTime: 0,
+      status: gs.STATUS_LOADING,
+    };
+  }
 
   componentDidMount() {
     const { pokemon, pointer } = this.state;
