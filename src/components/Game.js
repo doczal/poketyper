@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Timer from './Timer';
+import Navigation from './Navigation';
 import pokemon from '../pokemon.json';
 import shuffle from 'shuffle-array';
 import '../styles/Game.scss';
@@ -25,7 +26,7 @@ class Game extends Component {
     const { pokemon, pointer } = this.state;
     //Preload all Pokemon images
     for(let pkmn of pokemon) {
-      console.log(`${process.env.PUBLIC_URL}/img/${pkmn.img}`);
+      //console.log(`${process.env.PUBLIC_URL}/img/${pkmn.img}`);
       const img = new Image();
       img.src = `${process.env.PUBLIC_URL}/img/${pkmn.img}`;
     }
@@ -65,8 +66,8 @@ class Game extends Component {
 
   getNext = () => {
     const { pointer, totalPokemon, pokemon } = this.state;
-    console.log(pointer);
-    console.log(totalPokemon - 1);
+    //console.log(pointer);
+    //console.log(totalPokemon - 1);
     if(pointer < totalPokemon - 1) {
       this.setState((prevState) => ({
         pointer: prevState.pointer + 1,
@@ -112,27 +113,38 @@ class Game extends Component {
 
   render() {
     const { currPokemon, time, answer, status } = this.state;
-    return (
-      this.state.status !== gs.STATUS_LOADING ? (
-        <div>
-          <div className="spriteContainer">
-            <img src={`${process.env.PUBLIC_URL}/img/${currPokemon.img}`} alt={currPokemon.name}/>
-          </div>
-          <form onSubmit={this.handleSubmit}>
-            <input 
-              type="text"
-              onChange={this.handleChange}
-              value={answer}
-            />
-          </form>
-          { status === gs.STATUS_FINISHED ? (<div>Congrats! Your final time is:</div>) : null}
-          <Timer 
-            time={time}
-          />
+
+    const GameArea = () => (
+      <div>
+        <div className="spriteContainer">
+          <img src={`${process.env.PUBLIC_URL}/img/${currPokemon.img}`} alt={currPokemon.name}/>
         </div>
-      ) : (
-        <div className="loader">Now loading...</div>
-      )
+        <form onSubmit={this.handleSubmit}>
+          <input 
+            type="text"
+            onChange={this.handleChange}
+            value={answer}
+          />
+        </form>
+        { status === gs.STATUS_FINISHED ? (<div>Congrats! Your final time is:</div>) : null}
+        <Timer 
+          time={time}
+        />
+      </div>
+    );
+    
+    return (
+      <div>
+        <Navigation />
+        {
+          this.state.status !== gs.STATUS_LOADING ? (
+            <GameArea />
+          ) : (
+            <div className="loader">Now loading...</div>
+          )
+        }
+      </div>
+      
     );
   }
 }
