@@ -4,7 +4,7 @@ import { withFirebase } from '../Firebase';
 import AuthUserContext from './context';
 
 const withAuthentication = Component => {
-  class withAuthentication extends React.Component {
+  class WithAuthentication extends React.Component {
     constructor(props) {
       super(props);
 
@@ -35,7 +35,7 @@ const withAuthentication = Component => {
     }
   }
 
-  return withFirebase(withAuthentication);
+  return withFirebase(WithAuthentication);
 };
 
 export default withAuthentication;
