@@ -114,31 +114,27 @@ class Game extends Component {
   render() {
     const { currPokemon, time, answer, status } = this.state;
 
-    const GameArea = () => (
-      <div>
-        <div className="spriteContainer">
-          <img src={`${process.env.PUBLIC_URL}/img/${currPokemon.img}`} alt={currPokemon.name}/>
-        </div>
-        <form onSubmit={this.handleSubmit}>
-          <input 
-            type="text"
-            onChange={this.handleChange}
-            value={answer}
-          />
-        </form>
-        { status === gs.STATUS_FINISHED ? (<div>Congrats! Your final time is:</div>) : null}
-        <Timer 
-          time={time}
-        />
-      </div>
-    );
-    
     return (
       <div>
         <Navigation />
         {
           this.state.status !== gs.STATUS_LOADING ? (
-            <GameArea />
+            <div>
+              <div className="spriteContainer">
+                <img src={`${process.env.PUBLIC_URL}/img/${currPokemon.img}`} alt={currPokemon.name}/>
+              </div>
+              <form onSubmit={this.handleSubmit}>
+                <input 
+                  type="text"
+                  onChange={this.handleChange}
+                  value={answer}
+                />
+              </form>
+              { status === gs.STATUS_FINISHED ? (<div>Congrats! Your final time is:</div>) : null}
+              <Timer 
+                time={time}
+              />
+            </div>
           ) : (
             <div className="loader">Now loading...</div>
           )
