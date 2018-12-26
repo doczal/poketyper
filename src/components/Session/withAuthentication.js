@@ -9,7 +9,7 @@ const withAuthentication = Component => {
       super(props);
 
       this.state = {
-        authUser: null,
+        authUser: 'loading',
       };
     }
 
@@ -26,7 +26,6 @@ const withAuthentication = Component => {
     }
 
     render() {
-      console.log(this.props);
       return (
         <AuthUserContext.Provider value={this.state.authUser}>
           <Component {...this.props} />

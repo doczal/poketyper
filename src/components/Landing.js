@@ -12,8 +12,12 @@ const Landing = () => (
   </div>
 )
 
+//Signed in users will be redirected to game
 const condition = authUser => {
-  return !authUser;
+  if(authUser === null) {
+    return true;
+  }
+  return false;
 }
 
 export default withAuthorization(condition)(Landing);
