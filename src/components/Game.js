@@ -16,8 +16,8 @@ class Game extends Component {
       totalPokemon: pokemon.length,
       pointer: 0,
       answer: '',
-      time: 0,
-      finishTime: 0,
+      points: 0,
+      time: 120000,
       status: gs.STATUS_LOADING,
     };
   }
@@ -56,6 +56,9 @@ class Game extends Component {
     if(this.state.status === gs.STATUS_PLAYING) {
       const { answer, currPokemon } = this.state;
       if(answer.toLowerCase() === currPokemon.name.toLowerCase()) {
+        this.setState((prevState) => ({
+          points: prevState.points + 1,
+        }));
         this.getNext();
       }
       this.setState({
@@ -65,23 +68,13 @@ class Game extends Component {
   }
 
   getNext = () => {
-    const { pointer, totalPokemon, pokemon } = this.state;
+    const { pokemon } = this.state;
     //console.log(pointer);
     //console.log(totalPokemon - 1);
-    if(pointer < totalPokemon - 1) {
-      this.setState((prevState) => ({
-        pointer: prevState.pointer + 1,
-        currPokemon: pokemon[prevState.pointer + 1],
-      }));
-    } else {
-      this.setState({
-        finishTime: this.state.time,
-
-        
-        status: gs.STATUS_FINISHED,
-      })
-      this.stopTimer();
-    }
+    this.setState((prevState) => ({
+      pointer: prevState.pointer + 1,
+      currPokemon: pokemon[prevState.pointer + 1],
+    }));
   }
 
   //Timer functions
@@ -107,30 +100,40 @@ class Game extends Component {
 
   updateTimer = () => {
     this.setState((prevState) => ({
-      time: prevState.time + this.delta(),
-    }));
+      time: prevState.time - this.delta(),
+    }),
+    () => {
+      if(this.state.time <= 0) {
+        this.setState({
+          status: gs.STATUS_FINISHED,
+          time: 0,
+        });
+        this.stopTimer();
+      }
+    });
   }
 
   render() {
-    const { currPokemon, time, answer, status } = this.state;
+    const { currPokemon, time, answer, status, points } = this.state;
 
     return (
       <div>
         <Navigation />
         {
-          this.state.status !== gs.STATUS_LOADING ? (
+          status !== gs.STATUS_LOADING ? (
             <div>
               <div className="spriteContainer">
                 <img src={`${process.env.PUBLIC_URL}/img/${currPokemon.img}`} alt={currPokemon.name}/>
               </div>
               <form onSubmit={this.handleSubmit}>
-                <input 
+                <input
+                  disabled={status === gs.STATUS_FINISHED}
                   type="text"
                   onChange={this.handleChange}
                   value={answer}
                 />
               </form>
-              { status === gs.STATUS_FINISHED ? (<div>Congrats! Your final time is:</div>) : null}
+              { status === gs.STATUS_FINISHED ? (<div>Your final score is: {points}</div>) : null}
               <Timer 
                 time={time}
               />
