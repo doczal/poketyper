@@ -1,4 +1,4 @@
 export const LANDING = '/';
 export const SIGN_UP = '/signup';
 export const GAME = '/game';
-export const SCORES = '/scores';
+export const LEADERBOARD = '/leaderboard';

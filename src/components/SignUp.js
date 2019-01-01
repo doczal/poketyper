@@ -29,10 +29,13 @@ class SignUpFormBase extends Component {
 
   onSubmit = (e) => {
     const { username, email, passwordOne } = this.state;
-
-    this.props.firebase
+    const { firebase } = this.props;
+    firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
+        firebase.addNewUserToDB(username, authUser.user.uid);
+      })
+      .then(() => {
         this.setState({ ...INITIAL_STATE });
         this.props.history.push(ROUTES.GAME);
       })
@@ -111,6 +114,7 @@ const condition = authUser => {
   return false;
 }
 
-export default withAuthorization(condition)(SignUpPage);
+//export default withAuthorization(condition)(SignUpPage);
+export default SignUpPage;
 
 export { SignUpForm, SignUpLink };

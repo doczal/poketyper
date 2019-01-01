@@ -3,21 +3,25 @@ import Timer from './Timer';
 import Navigation from './Navigation';
 import pokemon from '../pokemon.json';
 import shuffle from 'shuffle-array';
+import { AuthUserContext } from './Session';
+import { withFirebase } from './Firebase';
+import { compose } from 'recompose';
 import '../styles/Game.scss';
 import * as gs from '../constants/gameStates';
 
 class Game extends Component {
+  static contextType = AuthUserContext;
+
   constructor(props) {
     super(props);
-
     this.state = {
       pokemon: shuffle(pokemon),
       currPokemon: null,
       totalPokemon: pokemon.length,
       pointer: 0,
       answer: '',
-      points: 0,
-      time: 120000,
+      score: 0,
+      time: 10000,
       status: gs.STATUS_LOADING,
     };
   }
@@ -30,7 +34,6 @@ class Game extends Component {
       const img = new Image();
       img.src = `${process.env.PUBLIC_URL}/img/${pkmn.img}`;
     }
-    console.log('done');
     this.setState({
       currPokemon: pokemon[pointer],
       status: gs.STATUS_READY,
@@ -39,6 +42,7 @@ class Game extends Component {
 
   handleChange = (e) => {
     if(!this.timerId) {
+      console.log(this.props.firebase);
       this.startTimer();
       this.setState({
         status: gs.STATUS_PLAYING,
@@ -57,7 +61,7 @@ class Game extends Component {
       const { answer, currPokemon } = this.state;
       if(answer.toLowerCase() === currPokemon.name.toLowerCase()) {
         this.setState((prevState) => ({
-          points: prevState.points + 1,
+          score: prevState.score + 1,
         }));
         this.getNext();
       }
@@ -104,9 +108,27 @@ class Game extends Component {
     }),
     () => {
       if(this.state.time <= 0) {
+        let authUser = this.context;
         this.setState({
           status: gs.STATUS_FINISHED,
           time: 0,
+        },
+        () => {
+          let usersRef = this.props.firebase.db.collection("users");
+          if(authUser !== 'loading' && authUser !== null) {
+            let docRef = usersRef.doc(authUser.uid);
+            docRef.get().then((doc) => {
+              if(doc.exists && this.state.score > doc.data().score) {
+                usersRef.doc(authUser.uid).update({
+                  score: this.state.score,
+                }).then(() => {
+                  console.log("Document updated!");
+                }).catch((err) => {
+                  console.log(err);
+                });
+              }
+            });
+          }
         });
         this.stopTimer();
       }
@@ -114,7 +136,7 @@ class Game extends Component {
   }
 
   render() {
-    const { currPokemon, time, answer, status, points } = this.state;
+    const { currPokemon, time, answer, status, score } = this.state;
 
     return (
       <div>
@@ -133,7 +155,7 @@ class Game extends Component {
                   value={answer}
                 />
               </form>
-              { status === gs.STATUS_FINISHED ? (<div>Your final score is: {points}</div>) : null}
+              { status === gs.STATUS_FINISHED ? (<div>Your final score is: {score}</div>) : null}
               <Timer 
                 time={time}
               />
@@ -143,9 +165,16 @@ class Game extends Component {
           )
         }
       </div>
-      
     );
   }
 }
 
-export default Game;
+// const Game = () => (
+//   <AuthUserContext.Consumer>
+//   { authUser =>
+//     <GameBase authUser={authUser} />
+//   }
+//   </AuthUserContext.Consumer>
+// )
+
+export default withFirebase(Game);
