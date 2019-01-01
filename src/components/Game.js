@@ -40,9 +40,14 @@ class Game extends Component {
     });
   }
 
+  componentWillUnmount() {
+    if(this.timerId) {
+      clearInterval(this.timerId);
+    }
+  }
+
   handleChange = (e) => {
     if(!this.timerId) {
-      console.log(this.props.firebase);
       this.startTimer();
       this.setState({
         status: gs.STATUS_PLAYING,
