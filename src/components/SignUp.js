@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import '../styles/Form.scss';
 import { Link, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { withFirebase } from './Firebase';
@@ -59,7 +60,7 @@ class SignUpFormBase extends Component {
       username === '';
 
     return (
-      <form onSubmit={this.onSubmit}>
+      <form className="Form" onSubmit={this.onSubmit}>
         <input 
           name="username"
           value={username}
@@ -88,7 +89,7 @@ class SignUpFormBase extends Component {
           type="password"
           placeholder="Confirm Password"
         />
-        <button disabled={isInvalid} type="submit">Sign Up</button>
+        <button className="Button" disabled={isInvalid} type="submit">Sign Up</button>
 
         {error && <p>{error.message}</p>}
       </form>

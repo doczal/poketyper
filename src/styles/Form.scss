@@ -1,0 +1,56 @@
+@import '../index.scss';
+
+.Form {
+  display: flex;
+  flex-direction: column;
+  width: 85%;
+  max-width: 40rem;
+  margin: 0 auto;
+  margin-top: 4rem;
+}
+
+.Form input {
+  border: 1px solid $colLite;
+  padding: 0.8rem;
+  border-radius: 6px;
+  background: transparent;
+  color: white;
+  margin-bottom: 1.5rem;
+
+  &:focus {
+    outline: none;
+  }
+
+  &:active, &:focus {
+    border: 1px solid white;
+  }
+
+  &::placeholder {
+    @include halfOpacity;
+    color: $txtLite;
+  }
+}
+
+.Button {
+  @include button;
+  font-size: 2rem;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 1.5rem 1rem;
+
+  &:disabled {
+    background-color: $colTouch;
+    cursor: default;
+  }
+}
+
+.Form .ButtonLink {
+  margin-top: 1.5rem;
+  background-color: $colTouchAlt;
+  //padding: 1.2rem 1rem;
+  //text-transform: uppercase;
+
+  &:hover {
+    background-color: $colTouchedAlt;
+  }
+}

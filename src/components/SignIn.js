@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import '../styles/SignIn.scss';
+import '../styles/Form.scss';
+import ButtonLink from './ButtonLink';
 import { withRouter } from 'react-router-dom';
 import { SignUpLink } from './SignUp';
 import { compose } from 'recompose';
@@ -6,8 +9,7 @@ import { withFirebase } from './Firebase';
 import * as ROUTES from '../constants/routes';
 
 const SignInPage = () => (
-  <div>
-    <h1>Sign In</h1>
+  <div className="SignInContainer">
     <SignInForm />
     <SignUpLink />
   </div>
@@ -51,7 +53,7 @@ class SignInFormBase extends Component {
     const isInvalid = password === '' || email === '';
 
     return (
-      <form onSubmit={this.onSubmit}>
+      <form className="Form" onSubmit={this.onSubmit}>
         <input 
           name="email"
           value={email}
@@ -66,9 +68,9 @@ class SignInFormBase extends Component {
           type="password"
           placeholder="Password"
         />
-        <button disabled={isInvalid} type="submit">Sign In</button>
-
-        {error && <p>{error.message}</p>}
+        <button className="Button" disabled={isInvalid} type="submit">Sign In</button>
+        {error && <p className="ErrorMessage">{error.message}</p>}
+        <ButtonLink to={ROUTES.GAME}>Play as Guest</ButtonLink>
       </form>
     );
   }

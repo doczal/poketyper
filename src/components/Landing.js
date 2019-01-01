@@ -1,14 +1,14 @@
 import React from 'react';
+import '../styles/Landing.scss';
 import { Link } from 'react-router-dom';
 import SignIn from './SignIn';
 import * as ROUTES from '../constants/routes';
 import { withAuthorization } from './Session';
 
 const Landing = () => (
-  <div>
-    <h1>Landing</h1>
+  <div className="Landing">
+    <img className="MainLogo" src={`${process.env.PUBLIC_URL}/img/poketyper_tsp.svg`} alt="PokeTyper" />
     <SignIn />
-    <Link to={ROUTES.GAME}>Play as Guest</Link>
   </div>
 )
 
