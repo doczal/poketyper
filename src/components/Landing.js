@@ -8,6 +8,7 @@ import { withAuthorization } from './Session';
 const Landing = () => (
   <div className="Landing">
     <img className="MainLogo" src={`${process.env.PUBLIC_URL}/img/poketyper_tsp.svg`} alt="PokeTyper" />
+    <h1 className="MainHeading">PokéTyper - Gotta Type 'Em All!</h1>
     <SignIn />
   </div>
 )

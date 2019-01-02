@@ -1,0 +1,106 @@
+@import '../index.scss';
+
+.GameContainer {
+  text-align: center;
+}
+
+.Game {
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 3rem;
+  max-width: 90%;
+}
+
+.SpecialBorder {
+  margin-top: 2rem;
+  display: inline-block;
+  border: 4px solid white;
+  border-radius: 28px;
+}
+
+.SpriteContainer {
+  position: relative;
+  width: 20rem;
+  height: 20rem;
+  background-color: white;
+  border-radius: 16px;
+  overflow: hidden;
+  //max-width: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 8px;
+}
+
+.PokemonSprite {
+  display: block;
+  margin: 0 auto;
+  width: calc(56px * 3);
+  image-rendering: pixelated;
+}
+
+.GameInfo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.SubInfo {
+  padding: 1rem 2rem;
+  & > h2 {
+    margin: 0 0 1rem;
+  }
+
+  &:first-child {
+    border-right: 1px solid white;
+  }
+
+  &:nth-child(2) {
+    border-left: 1px solid white;
+  }
+}
+
+.Timer, .Score {
+  font-size: 2rem;
+}
+
+.GameForm {
+  
+}
+
+.AnswerBox {
+  width: 24rem;
+  max-width: 90%;
+  border: 2px solid white;
+  padding: 0.8rem;
+  border-radius: 6px;
+  background: transparent;
+  color: white;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  transition: 0.1s border ease-in;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    @include halfOpacity;
+    color: $txtLite;
+  }
+
+  &.Correct {
+    border: 2px solid $colTouched;
+    background: $colTouched;
+  }
+
+  &.Wrong {
+    border: 2px solid $colBad;
+    background: $colBad;
+  }
+}
+
+.TextInfo {
+  margin-top: 1.5rem;
+  font-size: 1.4rem;
+}

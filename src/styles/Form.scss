@@ -6,7 +6,7 @@
   width: 85%;
   max-width: 40rem;
   margin: 0 auto;
-  margin-top: 4rem;
+  margin-top: 3rem;
 }
 
 .Form input {
@@ -46,11 +46,5 @@
 
 .Form .ButtonLink {
   margin-top: 1.5rem;
-  background-color: $colTouchAlt;
-  //padding: 1.2rem 1rem;
-  //text-transform: uppercase;
-
-  &:hover {
-    background-color: $colTouchedAlt;
-  }
+  @include buttonAltAddon;
 }

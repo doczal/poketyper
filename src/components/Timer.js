@@ -22,7 +22,7 @@ class Timer extends Component {
 
   render() {
     return (
-      <div>{this.displayTime(this.props.time)}</div>
+      <div className="Timer">{this.displayTime(this.props.time)}</div>
     );
   }
 }

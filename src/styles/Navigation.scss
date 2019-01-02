@@ -1,0 +1,42 @@
+@import '../index.scss';
+
+.Navigation {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid white;
+  padding: 1rem 2.5rem;
+
+  .ButtonLink {
+    & > a {
+      padding: 1rem 1.5rem;
+    }
+  }
+
+  button {
+    font-size: 1.4rem;
+    margin-left: 1rem;
+  }
+
+  .LeaderboardLink {
+    @include buttonAltAddon;
+  }
+}
+
+.NavigationRight {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.Logo {
+  display: block;
+  width: 4rem;
+}
+
+.Link {
+  margin-left: 1.5rem;
+  color: white;
+  text-decoration: none;
+}

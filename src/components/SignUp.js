@@ -1,14 +1,17 @@
 import React, { Component } from 'react';
 import '../styles/Form.scss';
+import '../styles/SignUp.scss';
 import { Link, withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { withFirebase } from './Firebase';
 import * as ROUTES from '../constants/routes';
 import { withAuthorization } from './Session';
+import Navigation from './Navigation';
 
 const SignUpPage = () => (
-  <div>
-    <h1>Sign Up</h1>
+  <div className="SignUpContainer">
+    <Navigation />
+    <h1 className="Heading">Create An Account</h1>
     <SignUpForm />
   </div>
 );
@@ -19,6 +22,7 @@ const INITIAL_STATE = {
   passwordOne: '',
   passwordTwo: '',
   error: null,
+  signUpComplete: false,
 };
 
 class SignUpFormBase extends Component {
@@ -37,6 +41,7 @@ class SignUpFormBase extends Component {
         firebase.addNewUserToDB(username, authUser.user.uid);
       })
       .then(() => {
+        //sign
         this.setState({ ...INITIAL_STATE });
         this.props.history.push(ROUTES.GAME);
       })
@@ -115,7 +120,7 @@ const condition = authUser => {
   return false;
 }
 
-//export default withAuthorization(condition)(SignUpPage);
-export default SignUpPage;
+export default withAuthorization(condition)(SignUpPage);
+//export default SignUpPage;
 
 export { SignUpForm, SignUpLink };

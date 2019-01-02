@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { AuthUserContext } from './Session';
 import { withFirebase } from './Firebase';
+import Loader from './Loader';
 
 
 class Leaderboard extends Component {
@@ -15,9 +16,11 @@ class Leaderboard extends Component {
   componentDidMount() {
     this.props.firebase.getHighScoresFromDB().then((querySnapshot) => {
       //console.log(querySnapshot.documents);
+      //debugger;
       this.setState({
         highscores: querySnapshot.docs.map((documentSnapshot) => documentSnapshot.data()),
       });
+      //debugger;
     });
   }
 
@@ -28,9 +31,11 @@ class Leaderboard extends Component {
         <ul>
           <h1>High Scores:</h1>
           {
-            this.state.highscores.map(item => (
-              <li>{`${item.name}: ${item.score}`}</li>
-            ))
+            this.state.highscores.length > 0 ? 
+              this.state.highscores.map(item => (
+                <li>{`${item.name}: ${item.score}`}</li>
+              )) :
+              <Loader />
           }
         </ul>
       </div>

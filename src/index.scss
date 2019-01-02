@@ -30,11 +30,15 @@ $colBG2: #0297a5;
 $colTouch: #17b36a;
 $colTouched: #29be4e;
 $colTouchDisabled: #999999;
+$colBad: #e6374f;
 
 $colLink: #20df86;
 
-$colTouchAlt: #383ab9;
-$colTouchedAlt: #3444d4;
+// $colTouchAlt: #383ab9;
+// $colTouchedAlt: #3444d4;
+
+$colTouchAlt: #6938b9;
+$colTouchedAlt: #8c34d4;
 
 $colLite: rgba(255, 255, 255, 0.6);
 
@@ -42,8 +46,14 @@ $txtMain: white;
 $txtLite: #dedede;
 $txtWarning: #e6374f;
 
+$dropShadow: rgba(0, 0, 0, 0.25);
+
 @mixin halfOpacity {
   opacity: 0.75;
+}
+
+@mixin dropShadow {
+  box-shadow: 0px 4px 4px $dropShadow;
 }
 
 @mixin button {
@@ -61,6 +71,13 @@ $txtWarning: #e6374f;
   
   &:hover {
     background-color: $colTouched;
+  }
+}
+
+@mixin buttonAltAddon {
+  background-color: $colTouchAlt;
+  &:hover {
+    background-color: $colTouchedAlt;
   }
 }
 

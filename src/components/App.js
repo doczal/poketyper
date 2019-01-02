@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import '../styles/App.scss';
 
 import LandingPage from './Landing';
+import Loader from './Loader';
 import SignUpPage from './SignUp';
 import Leaderboard from './Leaderboard';
 import Game from './Game'
@@ -24,7 +25,7 @@ const App = () => {
               <Route exact path={ROUTES.LEADERBOARD} component={Leaderboard} />
             </div>
           </Router> :
-          null
+          <Loader />
       }
     </AuthUserContext.Consumer>
   )
