@@ -14,7 +14,8 @@ const SCORE_CORRECT = 10;
 const SCORE_WRONG = 2;
 const CLASS_CORRECT = "Correct";
 const CLASS_WRONG = "Wrong";
-const TIME_LIMIT = 111000;
+const TOTAL_POKEMON = 151;
+const TIME_LIMIT = 10000;//111000;
 
 class Game extends Component {
   static contextType = AuthUserContext;
@@ -24,11 +25,12 @@ class Game extends Component {
     this.state = {
       pokemon: shuffle(pokemon),
       currPokemon: null,
-      totalPokemon: pokemon.length,
       pointer: 0,
       answer: '',
       score: 0,
       time: TIME_LIMIT,
+      imgElems: [],
+      loadedSprites: 0,
       status: gs.STATUS_LOADING,
     };
 
@@ -38,15 +40,18 @@ class Game extends Component {
   componentDidMount() {
     const { pokemon, pointer } = this.state;
     //Preload all Pokemon images
-    for(let pkmn of pokemon) {
-      //console.log(`${process.env.PUBLIC_URL}/img/${pkmn.img}`);
-      const img = new Image();
-      img.src = `${process.env.PUBLIC_URL}/img/${pkmn.img}`;
-    }
+    // for(let pkmn of pokemon) {
+    //   //console.log(`${process.env.PUBLIC_URL}/img/${pkmn.img}`);
+    //   const img = new Image();
+    //   img.src = `${process.env.PUBLIC_URL}/img/${pkmn.img}`;
+    //   img.onload = () => { console.log('loaded') };
+    // }
+    // console.log('READY');
     this.setState({
-      currPokemon: pokemon[pointer],
-      status: gs.STATUS_READY,
+      currPokemon: pokemon[0],
     });
+
+    this.preloadSprites();
   }
 
   componentWillUnmount() {
@@ -55,17 +60,61 @@ class Game extends Component {
     }
   }
 
-  restartGame = () => {
+  handleSpriteLoaded = () => {
+    console.log('loaded');
+    this.setState((prevState) => ({
+      loadedSprites: prevState.loadedSprites + 1,
+    }),
+    () => {
+      if(this.state.loadedSprites >= this.state.pokemon.length) {
+        this.setState({
+          status: gs.STATUS_READY,
+        });
+      }
+    });
+  }
 
+  preloadSprites = () => {
+    const { pokemon } = this.state;
+    let totalLoaded = 0;
+    const spriteArr = [];
+    //Preload all Pokemon images
+    for(let pkmn of pokemon) {
+      //console.log(`${process.env.PUBLIC_URL}/img/${pkmn.img}`);
+      const img = new Image();
+      img.src = `${process.env.PUBLIC_URL}/img/${pkmn.img}`;
+      img.onload = this.handleSpriteLoaded;
+      spriteArr.push(img);
+      if(totalLoaded >= this.state.pokemon.length) {
+        this.setState({
+          status: gs.STATUS_READY,
+        });
+      }
+    }
+    //Store it so that they can loaded from cache later
+    this.spriteElems = spriteArr;
+  }
+
+  restartGame = () => {
+    this.setState({
+      pokemon: shuffle(pokemon),
+      currPokemon: pokemon[0],
+      pointer: 0,
+      answer: '',
+      score: 0,
+      time: TIME_LIMIT,
+      status: gs.STATUS_READY,
+    });
   }
 
   handleChange = (e) => {
-    if(!this.timerId) {
+    if(this.state.status !== gs.STATUS_PLAYING) {
       this.startTimer();
       this.setState({
         status: gs.STATUS_PLAYING,
       });
     }
+    console.log(this.timerId);
     if(this.state.status !== gs.STATUS_FINISHED) {
       this.setState({
         answer: e.target.value,
@@ -90,7 +139,7 @@ class Game extends Component {
     // console.log(this.inputElem);
     if(this.state.status === gs.STATUS_PLAYING) {
       const { answer, currPokemon } = this.state;
-      if(answer.toLowerCase() === currPokemon.name.toLowerCase()) {
+      if(answer.toLowerCase() === 'asdf') {// currPokemon.name.toLowerCase()) {
         // Correct Answer
         this.flashInput(CLASS_CORRECT);
         this.setState((prevState) => ({
@@ -111,13 +160,20 @@ class Game extends Component {
   }
 
   getNext = () => {
-    const { pokemon } = this.state;
-    //console.log(pointer);
+    const { pokemon, pointer } = this.state;
+    console.log(pointer);
     //console.log(totalPokemon - 1);
-    this.setState((prevState) => ({
-      pointer: prevState.pointer + 1,
-      currPokemon: pokemon[prevState.pointer + 1],
-    }));
+    if(pointer < pokemon.length - 1) {
+      this.setState((prevState) => ({
+        pointer: prevState.pointer + 1,
+        currPokemon: pokemon[prevState.pointer + 1],
+      }));
+    } else {
+      this.setState((prevState) => ({
+        pointer: prevState.pointer + 1,
+      }));
+      this.gameOver();
+    }
   }
 
   //Timer functions
@@ -129,10 +185,8 @@ class Game extends Component {
   }
 
   startTimer = () => {
-    if(!this.timerId) {
-      this.offset = Date.now();
-      this.timerId = setInterval(this.updateTimer, 100);
-    }
+    this.offset = Date.now();
+    this.timerId = setInterval(this.updateTimer, 100);
   }
 
   stopTimer = () => {
@@ -141,41 +195,45 @@ class Game extends Component {
     }
   }
 
+  gameOver = () => {
+    let authUser = this.context;
+    this.setState({
+      status: gs.STATUS_FINISHED,
+      time: 0,
+    },
+    () => {
+      let usersRef = this.props.firebase.db.collection("users");
+      if(authUser !== 'loading' && authUser !== null) {
+        let docRef = usersRef.doc(authUser.uid);
+        docRef.get().then((doc) => {
+          if(doc.exists && this.state.score > doc.data().score) {
+            usersRef.doc(authUser.uid).update({
+              score: this.state.score,
+            }).then(() => {
+              console.log("Document updated!");
+            }).catch((err) => {
+              console.log(err);
+            });
+          }
+        });
+      }
+    });
+    this.stopTimer();
+  }
+
   updateTimer = () => {
     this.setState((prevState) => ({
       time: prevState.time - this.delta(),
     }),
     () => {
-      if(this.state.time <= 0) {
-        let authUser = this.context;
-        this.setState({
-          status: gs.STATUS_FINISHED,
-          time: 0,
-        },
-        () => {
-          let usersRef = this.props.firebase.db.collection("users");
-          if(authUser !== 'loading' && authUser !== null) {
-            let docRef = usersRef.doc(authUser.uid);
-            docRef.get().then((doc) => {
-              if(doc.exists && this.state.score > doc.data().score) {
-                usersRef.doc(authUser.uid).update({
-                  score: this.state.score,
-                }).then(() => {
-                  console.log("Document updated!");
-                }).catch((err) => {
-                  console.log(err);
-                });
-              }
-            });
-          }
-        });
-        this.stopTimer();
+      if(this.state.time <= 0 && this.state.status !== gs.STATUS_FINISHED) {
+        this.gameOver();
       }
     });
   }
 
   render() {
-    const { currPokemon, time, answer, status, score } = this.state;
+    const { pokemon, currPokemon, time, answer, status, score, pointer } = this.state;
 
     return (
       <div className="GameContainer">
@@ -191,6 +249,10 @@ class Game extends Component {
                 <div className="SubInfo">
                   <h2>Score</h2>
                   <div className="Score">{score}</div>
+                </div>
+                <div className="SubInfo">
+                  <h2>Caught</h2>
+                  <div className="Score">{`${pointer}/${pokemon.length}`}</div>
                 </div>
               </div>
               { this.context === null ? (<div className="TextInfo">Playing as guest (Score will not be submitted)</div>) : null}
@@ -209,6 +271,15 @@ class Game extends Component {
                   value={answer}
                 />
               </form>
+              { status === gs.STATUS_FINISHED ? 
+                (<button 
+                  className="ResetButton"
+                  type="button"
+                  onClick={this.restartGame}
+                 >
+                  Restart
+                 </button>) : 
+                null }
               <div className="TextInfo">Protip: For gender-based Pokémon, type 'M' or 'F' after their name.</div>
               { status === gs.STATUS_FINISHED ? (<div>Your final score is: {score}</div>) : null}
             </div>

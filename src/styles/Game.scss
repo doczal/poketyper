@@ -48,15 +48,19 @@
 .SubInfo {
   padding: 1rem 2rem;
   & > h2 {
+    font-size: 2rem;
     margin: 0 0 1rem;
   }
 
+  border-right: 1px solid white;
+  border-left: 1px solid white;
+
   &:first-child {
-    border-right: 1px solid white;
+    border-left: none;
   }
 
-  &:nth-child(2) {
-    border-left: 1px solid white;
+  &:last-child {
+    border-right: none;
   }
 }
 
@@ -98,6 +102,15 @@
     border: 2px solid $colBad;
     background: $colBad;
   }
+}
+
+.ResetButton {
+  @include button;
+  @include buttonAltAddon;
+  width: 24rem;
+  max-width: 90%;
+  text-transform: uppercase;
+
 }
 
 .TextInfo {
