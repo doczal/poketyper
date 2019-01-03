@@ -2,4 +2,9 @@
 
 .SignOutButton {
   @include button;
+
+  &:disabled {
+    background-color: $colTouch;
+    cursor: default;
+  }
 }

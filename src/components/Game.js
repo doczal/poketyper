@@ -29,6 +29,7 @@ class Game extends Component {
       answer: '',
       score: 0,
       highScore: 0,
+      highScoreLoaded: false,
       time: TIME_LIMIT,
       loadedSprites: 0,
       status: gs.STATUS_LOADING,
@@ -38,19 +39,16 @@ class Game extends Component {
   }
 
   componentDidMount() {
-    const { pokemon, pointer } = this.state;
-    //Preload all Pokemon images
-    // for(let pkmn of pokemon) {
-    //   //console.log(`${process.env.PUBLIC_URL}/img/${pkmn.img}`);
-    //   const img = new Image();
-    //   img.src = `${process.env.PUBLIC_URL}/img/${pkmn.img}`;
-    //   img.onload = () => { console.log('loaded') };
-    // }
-    // console.log('READY');
+    
+    const { pokemon } = this.state;
+
     this.setState({
       currPokemon: pokemon[0],
     });
-
+    console.log(this.context);
+    this.loadHighScores();
+    //console.log(this.context);
+    //Load initial high score from DB if logged in
     this.preloadSprites();
   }
 
@@ -61,7 +59,6 @@ class Game extends Component {
   }
 
   handleSpriteLoaded = () => {
-    console.log('loaded');
     this.setState((prevState) => ({
       loadedSprites: prevState.loadedSprites + 1,
     }),
@@ -95,6 +92,31 @@ class Game extends Component {
     this.spriteElems = spriteArr;
   }
 
+  loadHighScores = () => {
+    //console.log(this.context);
+    let authUser = this.context;
+    if(authUser !== 'loading' && authUser !== null) {
+      let usersRef = this.props.firebase.db.collection("users");
+      let docRef = usersRef.doc(authUser.uid);
+      docRef.get().then((doc) => {
+        if(doc.exists && doc.data().score > 0) {
+          this.setState({
+            highScore: doc.data().score,
+            highScoreLoaded: true,
+          });
+        } else {
+          this.setState({
+            highScoreLoaded: true,
+          });
+        }
+      });
+    } else {
+      this.setState({
+        highScoreLoaded: true,
+      });
+    }
+  }
+
   restartGame = () => {
     this.setState({
       pokemon: shuffle(pokemon),
@@ -108,7 +130,7 @@ class Game extends Component {
   }
 
   handleChange = (e) => {
-    if(this.state.status !== gs.STATUS_PLAYING) {
+    if(this.state.status === gs.STATUS_READY) {
       this.startTimer();
       this.setState({
         status: gs.STATUS_PLAYING,
@@ -161,7 +183,7 @@ class Game extends Component {
 
   getNext = () => {
     const { pokemon, pointer } = this.state;
-    console.log(pointer);
+    //console.log(pointer);
     //console.log(totalPokemon - 1);
     if(pointer < pokemon.length - 1) {
       this.setState((prevState) => ({
@@ -216,6 +238,7 @@ class Game extends Component {
               }).then(() => {
                 this.setState({
                   status: gs.STATUS_SCORE_SUBMIT,
+                  highScore: this.state.score,
                 });
                 console.log("Document updated!");
               }).catch((err) => {
@@ -248,7 +271,7 @@ class Game extends Component {
   }
 
   render() {
-    const { pokemon, currPokemon, time, answer, status, score, highScore, pointer } = this.state;
+    const { pokemon, currPokemon, time, answer, status, score, highScore, highScoreLoaded, pointer } = this.state;
     let gameOverMessage;
 
     if(status === gs.STATUS_SCORE_CHECK) {
@@ -261,7 +284,7 @@ class Game extends Component {
 
     return (
       <div className="GameContainer">
-        <Navigation />
+        <Navigation disabled={status === gs.STATUS_PLAYING} />
         {
           status !== gs.STATUS_LOADING ? (
             <div className="Game">
@@ -281,7 +304,7 @@ class Game extends Component {
                 </div>
                 <div className="SubInfo">
                   <h2>Hi-Score</h2>
-                  <div className="Score">{highScore}</div>
+                  <div className="Score">{highScoreLoaded ? highScore : "..."}</div>
                 </div>
                 
               </div>
@@ -295,7 +318,7 @@ class Game extends Component {
                 <input className="AnswerBox"
                   ref={this.answerBox}
                   placeholder="Who's that Pokémon?"
-                  disabled={status === gs.STATUS_FINISHED}
+                  disabled={status !== gs.STATUS_READY && status !== gs.STATUS_PLAYING}
                   type="text"
                   onChange={this.handleChange}
                   value={answer}

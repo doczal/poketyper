@@ -6,7 +6,7 @@ import * as ROUTES from '../constants/routes';
 import { AuthUserContext } from './Session'
 import ButtonLink from './ButtonLink';
 
-const Navigation = () => (
+const Navigation = (props) => (
   <AuthUserContext.Consumer>
     { authUser => 
       <nav className="Navigation">
@@ -17,7 +17,7 @@ const Navigation = () => (
         
         <div className="NavigationRight">
         <ButtonLink className="LeaderboardLink" to={ROUTES.LEADERBOARD}>Leaderboard</ButtonLink>
-        { authUser ? <SignOut /> : <ButtonLink to={ROUTES.LANDING}>Sign In</ButtonLink> }
+        { authUser ? <SignOut disabled={props.disabled} /> : <ButtonLink to={ROUTES.LANDING}>Sign In</ButtonLink> }
         </div>
         
       </nav>
