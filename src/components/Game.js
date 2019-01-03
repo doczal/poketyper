@@ -28,8 +28,8 @@ class Game extends Component {
       pointer: 0,
       answer: '',
       score: 0,
+      highScore: 0,
       time: TIME_LIMIT,
-      imgElems: [],
       loadedSprites: 0,
       status: gs.STATUS_LOADING,
     };
@@ -204,17 +204,32 @@ class Game extends Component {
     () => {
       let usersRef = this.props.firebase.db.collection("users");
       if(authUser !== 'loading' && authUser !== null) {
-        let docRef = usersRef.doc(authUser.uid);
-        docRef.get().then((doc) => {
-          if(doc.exists && this.state.score > doc.data().score) {
-            usersRef.doc(authUser.uid).update({
-              score: this.state.score,
-            }).then(() => {
-              console.log("Document updated!");
-            }).catch((err) => {
-              console.log(err);
-            });
-          }
+        this.setState({
+          status: gs.STATUS_SCORE_CHECK,
+        },
+        () => {
+          let docRef = usersRef.doc(authUser.uid);
+          docRef.get().then((doc) => {
+            if(doc.exists && this.state.score > doc.data().score) {
+              usersRef.doc(authUser.uid).update({
+                score: this.state.score,
+              }).then(() => {
+                this.setState({
+                  status: gs.STATUS_SCORE_SUBMIT,
+                });
+                console.log("Document updated!");
+              }).catch((err) => {
+                console.log(err);
+                this.setState({
+                  status: gs.STATUS_SCORE_NOT_SUBMIT,
+                });
+              });
+            } else {
+              this.setState({
+                status: gs.STATUS_SCORE_NOT_SUBMIT,
+              });
+            }
+          });
         });
       }
     });
@@ -233,7 +248,16 @@ class Game extends Component {
   }
 
   render() {
-    const { pokemon, currPokemon, time, answer, status, score, pointer } = this.state;
+    const { pokemon, currPokemon, time, answer, status, score, highScore, pointer } = this.state;
+    let gameOverMessage;
+
+    if(status === gs.STATUS_SCORE_CHECK) {
+      gameOverMessage = <GameOverText>Checking score...</GameOverText>;
+    } else if (status === gs.STATUS_SCORE_SUBMIT) {
+      gameOverMessage = <GameOverText>Congratulations! Your new High Score has been submitted!</GameOverText>;
+    } else if (status === gs.STATUS_SCORE_NOT_SUBMIT) {
+      gameOverMessage = <GameOverText>You did not exceed your previous best. Try again!</GameOverText>;
+    }
 
     return (
       <div className="GameContainer">
@@ -241,7 +265,12 @@ class Game extends Component {
         {
           status !== gs.STATUS_LOADING ? (
             <div className="Game">
+              { this.context === null ? (<GuestText />) : null}
               <div className="GameInfo">
+                <div className="SubInfo">
+                  <h2>Caught</h2>
+                  <div className="Caught">{`${pointer}/${pokemon.length}`}</div>
+                </div>
                 <div className="SubInfo">
                   <h2>Time</h2>
                   <Timer time={time} />
@@ -251,11 +280,12 @@ class Game extends Component {
                   <div className="Score">{score}</div>
                 </div>
                 <div className="SubInfo">
-                  <h2>Caught</h2>
-                  <div className="Score">{`${pointer}/${pokemon.length}`}</div>
+                  <h2>Hi-Score</h2>
+                  <div className="Score">{highScore}</div>
                 </div>
+                
               </div>
-              { this.context === null ? (<div className="TextInfo">Playing as guest (Score will not be submitted)</div>) : null}
+              { gameOverMessage }
               <div className="SpecialBorder">
                 <div className="SpriteContainer">
                   <img className="PokemonSprite" src={`${process.env.PUBLIC_URL}/img/${currPokemon.img}`} alt={currPokemon.name}/>
@@ -271,7 +301,7 @@ class Game extends Component {
                   value={answer}
                 />
               </form>
-              { status === gs.STATUS_FINISHED ? 
+              { status === gs.STATUS_FINISHED || status === gs.STATUS_SCORE_NOT_SUBMIT || status === gs.STATUS_SCORE_SUBMIT ? 
                 (<button 
                   className="ResetButton"
                   type="button"
@@ -281,7 +311,6 @@ class Game extends Component {
                  </button>) : 
                 null }
               <div className="TextInfo">Protip: For gender-based Pokémon, type 'M' or 'F' after their name.</div>
-              { status === gs.STATUS_FINISHED ? (<div>Your final score is: {score}</div>) : null}
             </div>
           ) : (
             <Loader />
@@ -291,6 +320,14 @@ class Game extends Component {
     );
   }
 }
+
+const GuestText = () => (
+  <div className="TextInfo">Playing as guest (Score will not be submitted)</div>
+)
+
+const GameOverText = (props) => (
+  <div className="TextInfo">{props.children}</div>
+)
 
 // const Game = () => (
 //   <AuthUserContext.Consumer>
