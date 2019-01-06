@@ -5,7 +5,8 @@ import LandingPage from './Landing';
 import Loader from './Loader';
 import SignUpPage from './SignUp';
 import Leaderboard from './Leaderboard';
-import Game from './Game'
+import Game from './Game';
+import Footer from './Footer';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import { AuthUserContext } from './Session'
 
@@ -23,6 +24,7 @@ const App = () => {
               <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
               <Route exact path={ROUTES.GAME} render={() => <Game />} />
               <Route exact path={ROUTES.LEADERBOARD} component={Leaderboard} />
+              <Footer />
             </div>
           </Router> :
           <Loader />

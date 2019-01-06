@@ -134,16 +134,6 @@ class Leaderboard extends Component {
   }
 };
 
-// this.state.highscores.map((item, index) => (
-//   <PlayerDisplay
-//     key={item.id}
-//     img={this.context && item.id === this.context.uid ? "red" : elites[index].sprite}
-//     name={item.name}
-//     title={this.context && item.id === this.context.uid ? "The Challenger" : elites[index].title}
-//     score={item.score}
-//   />
-// ))
-
 const LeaderboardDisplay = ({highscores, authUser, isInLeaderboard, playerInfo}) => {  
   
   let topScorers = highscores.map((item, index) => (
@@ -151,19 +141,20 @@ const LeaderboardDisplay = ({highscores, authUser, isInLeaderboard, playerInfo})
       key={item.id}
       img={authUser && item.id === authUser.uid ? "red" : elites[index].sprite}
       name={item.name}
-      title={authUser && item.id === authUser.uid ? "The Challenger" : elites[index].title}
+      title={authUser && item.id === authUser.uid ? elites[index].title + " (You)" : elites[index].title}
       score={item.score}
     />
   ));
 
   return (
     <div className="Leaderboard">
-      <h1>Indigo Plateau</h1>
+      <h1 className="Heading">Indigo Plateau</h1>
+      <p className="SubDesc">The PokéTyper Leaderboard</p>
       <div className="LeaderboardMain">
         {topScorers}
       </div>
       {
-        playerInfo && !isInLeaderboard ?
+        authUser && !isInLeaderboard ?
         <div className="LeaderboardPlayer">
           <h2>Your Score</h2>
           <PlayerDisplay
@@ -181,33 +172,6 @@ const LeaderboardDisplay = ({highscores, authUser, isInLeaderboard, playerInfo})
   );
 
 }
-
-// const LeaderboardDisplay = ({uid, highscores, isInLeaderboard}) => (
-//   <div className="LeaderboardDisplay">
-//     {
-//       highscores.map((item, index) => (
-//         <PlayerDisplay
-//           key={index}
-//           img={item.id === uid ? "red" : elites[index].sprite}
-//           name={item.name}
-//           title={item.id === uid ? "The Challenger" : elites[index].title}
-//           score={item.score}
-//         />
-//       ))
-//     }
-//     {
-//       !isInLeaderboard ? (
-//         <PlayerDisplay
-//           img="red"
-//           name="Me"
-//           title="The Challenger"
-//           score={20}
-//         />
-//       ) :
-//       null
-//     }
-//   </div>
-// );
 
 function shortenName(name) {
   if(name.length > 16) {

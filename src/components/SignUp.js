@@ -12,6 +12,7 @@ const SignUpPage = () => (
   <div className="SignUpContainer">
     <Navigation />
     <h1 className="Heading">Create An Account</h1>
+    <p className="SubDesc">Sign up now to compete on the Indigo Plateau leaderboard!</p>
     <SignUpForm />
   </div>
 );
@@ -35,6 +36,7 @@ class SignUpFormBase extends Component {
   onSubmit = (e) => {
     const { username, email, passwordOne } = this.state;
     const { firebase } = this.props;
+
     firebase
       .doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
@@ -70,6 +72,7 @@ class SignUpFormBase extends Component {
           name="username"
           value={username}
           onChange={this.onChange}
+          maxlength={20}
           type="text"
           placeholder="Username"
         />
