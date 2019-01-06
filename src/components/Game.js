@@ -161,7 +161,7 @@ class Game extends Component {
 
     if(this.state.status === gs.STATUS_PLAYING) {
       const { answer, currPokemon } = this.state;
-      if(answer.toLowerCase() === "asdf") {//currPokemon.name.toLowerCase()) {
+      if(answer.toLowerCase() === currPokemon.name.toLowerCase()) {
         // Correct Answer
         this.flashInput(CLASS_CORRECT);
         this.setState((prevState) => ({
