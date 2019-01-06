@@ -13,7 +13,7 @@ const SCORE_CORRECT = 10;
 const SCORE_WRONG = 2;
 const CLASS_CORRECT = "Correct";
 const CLASS_WRONG = "Wrong";
-const TIME_LIMIT = 10000;//111000;
+const TIME_LIMIT = 120000;
 const MAX_COMBO = 10;
 
 class Game extends Component {
@@ -158,11 +158,10 @@ class Game extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    // this.inputElem = document.getElementsByClassName("AnswerBox")[0];
-    // console.log(this.inputElem);
+
     if(this.state.status === gs.STATUS_PLAYING) {
       const { answer, currPokemon } = this.state;
-      if(answer.toLowerCase() === currPokemon.name.toLowerCase()) {
+      if(answer.toLowerCase() === "asdf") {//currPokemon.name.toLowerCase()) {
         // Correct Answer
         this.flashInput(CLASS_CORRECT);
         this.setState((prevState) => ({

@@ -50,15 +50,9 @@ class Firebase {
   }
 
   getHighScoresFromDB = () => {
-    let usersRef = this.db.collection("users");
+    let usersRef = this.db.collection("users").where("score", "<=", 2965);
     return usersRef.orderBy("score", "desc").limit(5)
       .get();
-
-      // return usersRef.orderBy("score", "desc").limit(5)
-      // .get().then((querySnapshot) => {
-      //   console.log('lol' + querySnapshot.doc());
-      //   return querySnapshot.doc();
-      // });
   }
 
   getMyInfoFromDB = (uid) => {

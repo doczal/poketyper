@@ -44,31 +44,6 @@ class Leaderboard extends Component {
 
   componentDidMount() {
 
-    // this.setState({
-    //   highscores: [
-    //     {
-    //       name: "Blue",
-    //       score: 500,
-    //     },
-    //     {
-    //       name: "Lance",
-    //       score: 400,
-    //     },
-    //     {
-    //       name: "Agatha",
-    //       score: 300,
-    //     },
-    //     {
-    //       name: "Bruno",
-    //       score: 200,
-    //     },
-    //     {
-    //       name: "FruitsPunchPachi",
-    //       score: 100,
-    //     },
-    //   ]
-    // });
-
     if(this.context) {
       this.props.firebase.getMyInfoFromDB(this.context.uid).then((doc) => {
         if(doc.exists) {
