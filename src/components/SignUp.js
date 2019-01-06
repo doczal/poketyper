@@ -72,7 +72,7 @@ class SignUpFormBase extends Component {
           name="username"
           value={username}
           onChange={this.onChange}
-          maxlength={20}
+          maxLength={20}
           type="text"
           placeholder="Username"
         />
