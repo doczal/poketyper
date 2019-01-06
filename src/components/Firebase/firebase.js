@@ -61,6 +61,12 @@ class Firebase {
       // });
   }
 
+  getMyInfoFromDB = (uid) => {
+    let usersRef = this.db.collection("users");
+    let docRef = usersRef.doc(uid);
+    return docRef.get();
+  }
+
 
   
   doSignOut = () => this.auth.signOut();

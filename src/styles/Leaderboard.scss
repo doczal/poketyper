@@ -1,0 +1,76 @@
+.LeaderboardContainer {
+  text-align: center;
+}
+
+.Leaderboard {
+  width: 90%;
+  max-width: 40rem;
+  margin: 0 auto;
+  padding-bottom: 3rem;
+}
+
+.PlayerProfile {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.PlayerDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border: solid white;
+  border-width: 2px 2px 0px 2px;
+  padding: 1rem 1.5rem;
+
+  &:first-child {
+    padding-top: 1.5rem;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+
+  &:last-child {
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid white;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
+}
+
+.LeaderboardPlayer .PlayerDisplay {
+  padding-top: 1.5rem;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+.LeaderboardPlayer h2 {
+  font-size: 1.8rem;
+  margin-top: 3rem;
+}
+
+.PlayerSprite {
+  display: inline-block;
+  width: calc(32px * 2);
+  image-rendering: pixelated;
+  border-radius: 16px;
+}
+
+.PlayerDesc {
+  text-align: left;
+  padding-left: 1.5rem;
+}
+
+.PlayerTitle {
+  font-size: 1.2rem;
+}
+
+.PlayerName {
+  //display: inline-block;
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.PlayerScore {
+  font-size: 2rem;
+}
