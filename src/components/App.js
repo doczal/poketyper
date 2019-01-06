@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import '../styles/App.scss';
 
 import LandingPage from './Landing';
@@ -31,16 +31,6 @@ const App = () => {
       }
     </AuthUserContext.Consumer>
   )
-  
-
-  // <Router>
-  //   <div className="App">
-  //     <Route exact path={ROUTES.LANDING} component={LandingPage} />
-  //     <Route exact path={ROUTES.SIGN_UP} component={SignUpPage} />
-  //     <Route exact path={ROUTES.GAME} render={() => <Game />} />
-  //   </div>
-  // </Router> :
-  // null
 }  
 
 export default withAuthentication(App);

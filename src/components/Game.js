@@ -6,7 +6,6 @@ import pokemon from '../pokemon.json';
 import shuffle from 'shuffle-array';
 import { AuthUserContext } from './Session';
 import { withFirebase } from './Firebase';
-import { compose } from 'recompose';
 import '../styles/Game.scss';
 import * as gs from '../constants/gameStates';
 
@@ -14,8 +13,8 @@ const SCORE_CORRECT = 10;
 const SCORE_WRONG = 2;
 const CLASS_CORRECT = "Correct";
 const CLASS_WRONG = "Wrong";
-const TOTAL_POKEMON = 151;
 const TIME_LIMIT = 10000;//111000;
+const MAX_COMBO = 10;
 
 class Game extends Component {
   static contextType = AuthUserContext;
@@ -28,6 +27,7 @@ class Game extends Component {
       pointer: 0,
       answer: '',
       score: 0,
+      combo: 0,
       highScore: 0,
       highScoreLoaded: false,
       time: TIME_LIMIT,
@@ -45,10 +45,10 @@ class Game extends Component {
     this.setState({
       currPokemon: pokemon[0],
     });
-    console.log(this.context);
-    this.loadHighScores();
-    //console.log(this.context);
+
     //Load initial high score from DB if logged in
+    this.loadHighScores();
+    
     this.preloadSprites();
   }
 
@@ -124,6 +124,7 @@ class Game extends Component {
       pointer: 0,
       answer: '',
       score: 0,
+      combo: 0,
       time: TIME_LIMIT,
       status: gs.STATUS_READY,
     });
@@ -161,17 +162,19 @@ class Game extends Component {
     // console.log(this.inputElem);
     if(this.state.status === gs.STATUS_PLAYING) {
       const { answer, currPokemon } = this.state;
-      if(answer.toLowerCase() === 'asdf') {// currPokemon.name.toLowerCase()) {
+      if(answer.toLowerCase() === currPokemon.name.toLowerCase()) {
         // Correct Answer
         this.flashInput(CLASS_CORRECT);
         this.setState((prevState) => ({
-          score: prevState.score + SCORE_CORRECT,
+          combo: prevState.combo >= MAX_COMBO ? MAX_COMBO : prevState.combo + 1,
+          score: prevState.score + SCORE_CORRECT + prevState.combo,
         }));
         this.getNext();
       } else {
         //Wrong Answer
         this.flashInput(CLASS_WRONG);
         this.setState((prevState) => ({
+          combo: 0,
           score: prevState.score - SCORE_WRONG,
         }));
       }
@@ -271,15 +274,17 @@ class Game extends Component {
   }
 
   render() {
-    const { pokemon, currPokemon, time, answer, status, score, highScore, highScoreLoaded, pointer } = this.state;
+    const { pokemon, currPokemon, time, answer, status, score, highScore, highScoreLoaded, pointer, combo } = this.state;
     let gameOverMessage;
 
     if(status === gs.STATUS_SCORE_CHECK) {
       gameOverMessage = <GameOverText>Checking score...</GameOverText>;
     } else if (status === gs.STATUS_SCORE_SUBMIT) {
-      gameOverMessage = <GameOverText>Congratulations! Your new High Score has been submitted!</GameOverText>;
+      gameOverMessage = <GameOverText>New High Score achieved! Score has been submitted.</GameOverText>;
     } else if (status === gs.STATUS_SCORE_NOT_SUBMIT) {
-      gameOverMessage = <GameOverText>You did not exceed your previous best. Try again!</GameOverText>;
+      gameOverMessage = <GameOverText>You didn't do your very best. Try again!</GameOverText>;
+    } else if (status === gs.STATUS_FINISHED) {
+      gameOverMessage = <GameOverText>Game Over.</GameOverText>;
     }
 
     return (
@@ -288,6 +293,7 @@ class Game extends Component {
         {
           status !== gs.STATUS_LOADING ? (
             <div className="Game">
+              <h1 className="Heading">PokéTyper</h1>
               { this.context === null ? (<GuestText />) : null}
               <div className="GameInfo">
                 <div className="SubInfo">
@@ -309,6 +315,11 @@ class Game extends Component {
                 
               </div>
               { gameOverMessage }
+              {
+                status === gs.STATUS_PLAYING ?
+                <div className={`ComboText${combo >= MAX_COMBO ? " ComboMax" : ""}`}>{`Current Combo: ${combo < MAX_COMBO ? combo : "MAX"}`}</div> :
+                null
+              }
               <div className="SpecialBorder">
                 <div className="SpriteContainer">
                   <img className="PokemonSprite" src={`${process.env.PUBLIC_URL}/img/${currPokemon.img}`} alt={currPokemon.name}/>
@@ -349,15 +360,7 @@ const GuestText = () => (
 )
 
 const GameOverText = (props) => (
-  <div className="TextInfo">{props.children}</div>
+  <div className="GameOverText">{props.children}</div>
 )
-
-// const Game = () => (
-//   <AuthUserContext.Consumer>
-//   { authUser =>
-//     <GameBase authUser={authUser} />
-//   }
-//   </AuthUserContext.Consumer>
-// )
 
 export default withFirebase(Game);

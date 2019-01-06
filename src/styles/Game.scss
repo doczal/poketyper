@@ -10,6 +10,9 @@
   margin: 0 auto;
   margin-top: 3rem;
   max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .SpecialBorder {
@@ -111,7 +114,7 @@
 
 .AnswerBox {
   width: 24rem;
-  max-width: 90%;
+  max-width: 100%;
   border: 2px solid white;
   padding: 0.8rem;
   border-radius: 6px;
@@ -153,4 +156,44 @@
 .TextInfo {
   margin: 1.5rem 0 2rem;
   font-size: 1.4rem;
+}
+
+.GameOverText {
+  margin: 1.5rem 0 1rem;
+  font-size: 1.8rem;
+}
+
+.ComboText {
+  padding: 1.5rem 0;
+  font-size: 1.8rem;
+  max-width: 100%;
+  display: inline-block;
+}
+
+.ComboMax {
+  color: rgb(187, 47, 47);
+  font-weight: bold;
+  
+  animation: comboMax 1s infinite ease-in-out;
+}
+
+@keyframes comboMax {
+  0% {
+    color: rgb(187, 47, 47);
+  }
+
+  25% {
+    color: rgb(28, 177, 97);
+  }
+
+  50% {
+    color: rgb(241, 214, 60);
+    transform: scale(1.2);
+  }
+
+  75% {
+    color: rgb(28, 177, 97);
+  }
+
+
 }
