@@ -32,6 +32,7 @@ class Game extends Component {
       highScoreLoaded: false,
       time: TIME_LIMIT,
       loadedSprites: 0,
+      wrongCount: 0,
       status: gs.STATUS_LOADING,
     };
 
@@ -127,6 +128,7 @@ class Game extends Component {
       combo: 0,
       time: TIME_LIMIT,
       status: gs.STATUS_READY,
+      wrongCount: 0,
     });
   }
 
@@ -167,15 +169,24 @@ class Game extends Component {
         this.setState((prevState) => ({
           combo: prevState.combo >= MAX_COMBO ? MAX_COMBO : prevState.combo + 1,
           score: prevState.score + SCORE_CORRECT + prevState.combo,
+          wrongCount: 0,
         }));
         this.getNext();
       } else {
         //Wrong Answer
         this.flashInput(CLASS_WRONG);
+
+        let currWrong = this.state.wrongCount;
         this.setState((prevState) => ({
           combo: 0,
           score: prevState.score - SCORE_WRONG,
-        }));
+          wrongCount: prevState.wrongCount > 0 ? 0 : prevState.wrongCount + 1,
+        }),
+        () => {
+          if(currWrong > 0) {
+            this.getNext();
+          }
+        });
       }
       this.setState({
         answer: '',
@@ -296,7 +307,7 @@ class Game extends Component {
               { this.context === null ? (<GuestText />) : null}
               <div className="GameInfo">
                 <div className="SubInfo">
-                  <h2>Caught</h2>
+                  <h2>Pokémon</h2>
                   <div className="Caught">{`${pointer}/${pokemon.length}`}</div>
                 </div>
                 <div className="SubInfo">
