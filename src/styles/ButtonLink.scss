@@ -2,11 +2,10 @@
 
 .ButtonLink {
   @include button;
-  padding: 0;
-  & > a {
-    padding: 1rem;
-    display: block;
-    text-decoration: none;
-    color: $txtMain;
-  }
+  padding: 1rem;
+  display: block;
+  text-decoration: none;
+  color: $txtMain;
+
+  text-decoration: none;
 }
